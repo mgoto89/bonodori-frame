@@ -72,7 +72,7 @@ shootBtn.addEventListener('click', () => {
   const fw = frameImg.width;
   const fh = frameImg.height;
 
-  // canvas をフレーム画像のサイズに合わせる
+  // canvas をフレーム画像のサイズに合わせる（重要）
   canvas.width = fw;
   canvas.height = fh;
 
@@ -94,17 +94,17 @@ shootBtn.addEventListener('click', () => {
     drawH = fw / videoRatio;
   }
 
-  // 中央に配置（はみ出し部分は見えない）
+  // 中央に配置（はみ出し部分は見えない＝トリミング）
   const x = (fw - drawW) / 2;
   const y = (fh - drawH) / 2;
 
   // カメラ映像を描画（フレームに合わせてトリミング）
   ctx.drawImage(video, x, y, drawW, drawH);
 
-  // フレームを重ねる（元の比率のまま）
+  // フレームを重ねる（絶対に切れない）
   ctx.drawImage(frameImg, 0, 0, fw, fh);
 });
-
+    
     // 合成画像を保存
 saveBtn.addEventListener('click', () => {
   canvas.toBlob(blob => {
