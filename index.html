@@ -54,12 +54,9 @@
 
     // 合成画像を保存
     saveBtn.addEventListener('click', () => {
-      const url = canvas.toDataURL('image/png');
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'bonodori_frame.png';
-      a.click();
-    });
+    const url = canvas.toDataURL('image/png');
+    window.open(url, '_blank');
+});
   </script>
 </body>
 </html>
