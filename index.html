@@ -48,10 +48,17 @@
 document.querySelectorAll('.frameBtn').forEach(btn => {
   btn.addEventListener('click', () => {
     const src = btn.getAttribute('data-src');
+
+    frameImg.onload = () => {
+      console.log("frame changed:", src);
+      shootBtn.disabled = false;   // ← 読み込み完了で撮影可能にする
+    };
+
+    shootBtn.disabled = true;      // ← 読み込み前は押せない
     frameImg.src = src;
-    console.log("frame changed:", src);
   });
 });
+
 
     // カメラ起動
    let currentFacing = "environment";  // 初期はバックカメラ
