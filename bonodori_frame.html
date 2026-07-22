@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>盆踊りフォトフレーム</title>
+  <style>
+    body { text-align: center; font-family: sans-serif; }
+    video, canvas { max-width: 100%; height: auto; }
+    button { margin: 10px; padding: 10px 20px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <h1>盆踊りフォトフレーム</h1>
+
+  <!-- カメラ映像 -->
+  <video id="video" autoplay playsinline></video><br>
+  <button id="shootBtn">写真を撮る</button>
+
+  <!-- 合成用キャンバス -->
+  <canvas id="canvas"></canvas><br>
+
+  <button id="saveBtn">合成画像を保存</button>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const shootBtn = document.getElementById('shootBtn');
+    const saveBtn = document.getElementById('saveBtn');
+
+    let frameImg = new Image();
+
+    // ★ フレーム画像を自動読み込み（ここが変更点）
+    frameImg.src = "frame.png";   // ← HTMLと同じフォルダに置く
+
+    // カメラ起動
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => { video.srcObject = stream; })
+      .catch(err => alert('カメラを利用できません: ' + err));
+
+    // 撮影してキャンバスに描画
+    shootBtn.addEventListener('click', () => {
+      const w = video.videoWidth;
+      const h = video.videoHeight;
+      canvas.width = w;
+      canvas.height = h;
+
+      // 写真を描画
+      ctx.drawImage(video, 0, 0, w, h);
+
+      // フレームを重ねる
+      ctx.drawImage(frameImg, 0, 0, w, h);
+    });
+
+    // 合成画像を保存
+    saveBtn.addEventListener('click', () => {
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'bonodori_frame.png';
+      a.click();
+    });
+  </script>
+</body>
+</html>
+
