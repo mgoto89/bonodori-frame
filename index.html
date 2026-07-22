@@ -58,9 +58,11 @@ document.querySelectorAll('.frameBtn').forEach(btn => {
       shootBtn.disabled = false;
     };
 
-    frameImg.src = src;
+    frameImg.src = "";   // ← Safari対策：一度空にする
+    frameImg.src = src;  // ← これで必ず onload が発火する
   });
 });
+
 
     // カメラ起動
    let currentFacing = "environment";  // 初期はバックカメラ
