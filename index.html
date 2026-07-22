@@ -32,6 +32,10 @@
 
     // ★ フレーム画像を自動読み込み（ここが変更点）
     frameImg.src = "frame.png";   // ← HTMLと同じフォルダに置く
+    frameImg.onload = () => {
+  console.log("frame loaded");
+};
+
 
     // カメラ起動
     navigator.mediaDevices.getUserMedia({ video: true })
