@@ -40,24 +40,28 @@
 
     let frameImg = new Image();
 
-    // ★ フレーム画像を自動読み込み（ここが変更点）
-    frameImg.src = "frame1.png";   // ← HTMLと同じフォルダに置く
-    frameImg.onload = () => {
+// ★ フレーム画像を自動読み込み
+frameImg.src = "frame1.png";
+frameImg.onload = () => {
   console.log("frame loaded");
 };
+
+// ▼ フレーム切り替え機能（これだけでOK）
 document.querySelectorAll('.frameBtn').forEach(btn => {
   btn.addEventListener('click', () => {
     const src = btn.getAttribute('data-src');
 
+    shootBtn.disabled = true;
+
     frameImg.onload = () => {
       console.log("frame changed:", src);
-      shootBtn.disabled = false;   // ← 読み込み完了で撮影可能にする
+      shootBtn.disabled = false;
     };
 
-    shootBtn.disabled = true;      // ← 読み込み前は押せない
     frameImg.src = src;
   });
 });
+
 
 
     // カメラ起動
