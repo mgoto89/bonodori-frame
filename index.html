@@ -15,6 +15,7 @@
   <!-- カメラ映像 -->
   <video id="video" autoplay playsinline></video><br>
   <button id="shootBtn">写真を撮る</button>
+ <button id="switchBtn">カメラ切り替え</button>
 
   <!-- 合成用キャンバス -->
   <canvas id="canvas"></canvas><br>
@@ -38,9 +39,33 @@
 
 
     // カメラ起動
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => { video.srcObject = stream; })
-      .catch(err => alert('カメラを利用できません: ' + err));
+   let currentFacing = "environment";  // 初期はバックカメラ
+
+function startCamera() {
+  // 既存ストリームを停止
+  if (video.srcObject) {
+    video.srcObject.getTracks().forEach(t => t.stop());
+  }
+
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: currentFacing }
+  })
+  .then(stream => {
+    video.srcObject = stream;
+  })
+  .catch(err => {
+    alert("カメラを起動できません: " + err);
+  });
+}
+
+// 初回起動
+startCamera();
+
+// 切り替えボタン
+document.getElementById("switchBtn").addEventListener("click", () => {
+  currentFacing = (currentFacing === "user") ? "environment" : "user";
+  startCamera();
+});
 
     // 撮影してキャンバスに描画
     shootBtn.addEventListener('click', () => {
