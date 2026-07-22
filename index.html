@@ -57,9 +57,15 @@
     });
 
     // 合成画像を保存
-    saveBtn.addEventListener('click', () => {
-    const url = canvas.toDataURL('image/png');
-    window.open(url, '_blank');
+saveBtn.addEventListener('click', () => {
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'bonodori_frame.png';
+    a.click();
+    URL.revokeObjectURL(url);
+  }, 'image/png');
 });
   </script>
 </body>
