@@ -7,152 +7,135 @@
     body { text-align: center; font-family: sans-serif; }
     video, canvas { max-width: 100%; height: auto; }
     button {
-  margin: 16px;
-  padding: 25px 40px;   /* ← ボタンを大きくする */
-  font-size: 30px;      /* ← 文字を大きくする */
-  border-radius: 12px;  /* ← 角を丸くして押しやすく */
-}
+      margin: 16px;
+      padding: 25px 40px;
+      font-size: 30px;
+      border-radius: 12px;
+    }
   </style>
 </head>
 <body>
   <h1>盆踊りフォトフレーム</h1>
 
-  <!-- カメラ映像 -->
   <video id="video" autoplay playsinline></video><br>
   <button id="shootBtn">写真を撮る</button>
- <button id="switchBtn">カメラ切り替え</button>
+  <button id="switchBtn">カメラ切り替え</button>
 
-  <!-- 合成用キャンバス -->
   <canvas id="canvas"></canvas><br>
 
   <button id="saveBtn">合成画像を保存</button>
-<div>
-  <button class="frameBtn" data-src="frame1.png">フレーム1</button>
-  <button class="frameBtn" data-src="frame3.png">フレーム2</button>
 
-</div>
-  <script>
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const shootBtn = document.getElementById('shootBtn');
-    const saveBtn = document.getElementById('saveBtn');
+  <div>
+    <button class="frameBtn" data-src="frame1.png">フレーム1</button>
+    <button class="frameBtn" data-src="frame3.png">フレーム2</button>
+  </div>
 
-    let frameImg = new Image();
+<script>
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const shootBtn = document.getElementById('shootBtn');
+  const saveBtn = document.getElementById('saveBtn');
 
-// ★ フレーム画像を自動読み込み
-frameImg.src = "frame1.png";
-frameImg.onload = () => {
-  console.log("frame loaded");
-};
+  // フレーム画像（1回だけ宣言）
+  let frameImg = new Image();
 
-// 初期読み込み
-frameImg.src = "frame1.png";
-shootBtn.disabled = true;   // ← 追加（重要）
+  // 初期フレーム読み込み
+  shootBtn.disabled = true;   // 読み込み前は無効化
+  frameImg.src = "frame1.png";
 
-frameImg.onload = () => {
-  console.log("frame loaded");
-  shootBtn.disabled = false;  // ← 初期読み込み完了で有効化
-};
+  frameImg.onload = () => {
+    console.log("初期フレーム読み込み完了");
+    shootBtn.disabled = false;
+  };
 
-// フレーム切り替え（これだけ）
-document.querySelectorAll('.frameBtn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const src = btn.getAttribute('data-src');
+  // フレーム切り替え
+  document.querySelectorAll('.frameBtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const src = btn.getAttribute('data-src');
 
-    shootBtn.disabled = true;  // 読み込み前は無効化
+      shootBtn.disabled = true;  // 読み込み前は無効化
 
-    frameImg.onload = () => {
-      console.log("frame changed:", src);
-      shootBtn.disabled = false;  // 読み込み完了で有効化
-    };
+      frameImg.onload = () => {
+        console.log("フレーム切り替え完了:", src);
+        shootBtn.disabled = false;
+      };
 
-    frameImg.src = "";   // Safari対策
-    frameImg.src = src;
+      // Safari対策：必ず onload を発火させる
+      frameImg.src = "";
+      frameImg.src = src;
+    });
   });
-});
 
+  // カメラ起動
+  let currentFacing = "environment";
 
+  function startCamera() {
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(t => t.stop());
+    }
 
-    // カメラ起動
-   let currentFacing = "environment";  // 初期はバックカメラ
-
-function startCamera() {
-  // 既存ストリームを停止
-  if (video.srcObject) {
-    video.srcObject.getTracks().forEach(t => t.stop());
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: currentFacing }
+    })
+    .then(stream => {
+      video.srcObject = stream;
+    })
+    .catch(err => {
+      alert("カメラを起動できません: " + err);
+    });
   }
 
-  navigator.mediaDevices.getUserMedia({
-    video: { facingMode: currentFacing }
-  })
-  .then(stream => {
-    video.srcObject = stream;
-  })
-  .catch(err => {
-    alert("カメラを起動できません: " + err);
-  });
-}
-
-// 初回起動
-startCamera();
-
-// 切り替えボタン
-document.getElementById("switchBtn").addEventListener("click", () => {
-  currentFacing = (currentFacing === "user") ? "environment" : "user";
   startCamera();
-});
 
-    // 撮影してキャンバスに描画
-shootBtn.addEventListener('click', () => {
-  const fw = frameImg.width;
-  const fh = frameImg.height;
+  // カメラ切り替え
+  document.getElementById("switchBtn").addEventListener("click", () => {
+    currentFacing = (currentFacing === "user") ? "environment" : "user";
+    startCamera();
+  });
 
-  // canvas をフレーム画像のサイズに合わせる（重要）
-  canvas.width = fw;
-  canvas.height = fh;
+  // 撮影処理
+  shootBtn.addEventListener('click', () => {
+    const fw = frameImg.width;
+    const fh = frameImg.height;
 
-  // カメラ映像の縦横比
-  const vw = video.videoWidth;
-  const vh = video.videoHeight;
-  const videoRatio = vw / vh;
-  const frameRatio = fw / fh;
+    canvas.width = fw;
+    canvas.height = fh;
 
-  let drawW, drawH;
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+    const videoRatio = vw / vh;
+    const frameRatio = fw / fh;
 
-  if (videoRatio > frameRatio) {
-    // カメラが横長 → 高さを合わせて幅を拡大（はみ出しOK）
-    drawH = fh;
-    drawW = fh * videoRatio;
-  } else {
-    // カメラが縦長 → 幅を合わせて高さを拡大（はみ出しOK）
-    drawW = fw;
-    drawH = fw / videoRatio;
-  }
+    let drawW, drawH;
 
-  // 中央に配置（はみ出し部分は見えない＝トリミング）
-  const x = (fw - drawW) / 2;
-  const y = (fh - drawH) / 2;
+    if (videoRatio > frameRatio) {
+      drawH = fh;
+      drawW = fh * videoRatio;
+    } else {
+      drawW = fw;
+      drawH = fw / videoRatio;
+    }
 
-  // カメラ映像を描画（フレームに合わせてトリミング）
-  ctx.drawImage(video, x, y, drawW, drawH);
+    const x = (fw - drawW) / 2;
+    const y = (fh - drawH) / 2;
 
-  // フレームを重ねる（絶対に切れない）
-  ctx.drawImage(frameImg, 0, 0, fw, fh);
-});
-    
-    // 合成画像を保存
-saveBtn.addEventListener('click', () => {
-  canvas.toBlob(blob => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'bonodori_frame.png';
-    a.click();
-    URL.revokeObjectURL(url);
-  }, 'image/png');
-});
-  </script>
+    ctx.drawImage(video, x, y, drawW, drawH);
+    ctx.drawImage(frameImg, 0, 0, fw, fh);
+  });
+
+  // 保存
+  saveBtn.addEventListener('click', () => {
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'bonodori_frame.png';
+      a.click();
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  });
+</script>
+
 </body>
 </html>
-
