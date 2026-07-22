@@ -46,22 +46,34 @@ frameImg.onload = () => {
   console.log("frame loaded");
 };
 
-// ▼ フレーム切り替え機能（これだけでOK）
+let frameImg = new Image();
+
+// 初期読み込み
+frameImg.src = "frame1.png";
+shootBtn.disabled = true;   // ← 追加（重要）
+
+frameImg.onload = () => {
+  console.log("frame loaded");
+  shootBtn.disabled = false;  // ← 初期読み込み完了で有効化
+};
+
+// フレーム切り替え（これだけ）
 document.querySelectorAll('.frameBtn').forEach(btn => {
   btn.addEventListener('click', () => {
     const src = btn.getAttribute('data-src');
 
-    shootBtn.disabled = true;
+    shootBtn.disabled = true;  // 読み込み前は無効化
 
     frameImg.onload = () => {
       console.log("frame changed:", src);
-      shootBtn.disabled = false;
+      shootBtn.disabled = false;  // 読み込み完了で有効化
     };
 
-    frameImg.src = "";   // ← Safari対策：一度空にする
-    frameImg.src = src;  // ← これで必ず onload が発火する
+    frameImg.src = "";   // Safari対策
+    frameImg.src = src;
   });
 });
+
 
 
     // カメラ起動
