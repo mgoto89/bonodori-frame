@@ -26,7 +26,11 @@
   <canvas id="canvas"></canvas><br>
 
   <button id="saveBtn">合成画像を保存</button>
+<div>
+  <button class="frameBtn" data-src="frame1.png">フレーム1</button>
+  <button class="frameBtn" data-src="frame2.png">フレーム2</button>
 
+</div>
   <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
@@ -65,6 +69,14 @@ function startCamera() {
 
 // 初回起動
 startCamera();
+// ▼ フレーム切り替え機能
+document.querySelectorAll('.frameBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const src = btn.getAttribute('data-src');
+    frameImg.src = src;
+    console.log("frame changed:", src);
+  });
+});
 
 // 切り替えボタン
 document.getElementById("switchBtn").addEventListener("click", () => {
