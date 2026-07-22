@@ -84,14 +84,6 @@ function startCamera() {
 
 // 初回起動
 startCamera();
-// ▼ フレーム切り替え機能
-document.querySelectorAll('.frameBtn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const src = btn.getAttribute('data-src');
-    frameImg.src = src;
-    console.log("frame changed:", src);
-  });
-});
 
 // 切り替えボタン
 document.getElementById("switchBtn").addEventListener("click", () => {
