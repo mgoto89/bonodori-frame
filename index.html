@@ -47,14 +47,9 @@
 };
 document.querySelectorAll('.frameBtn').forEach(btn => {
   btn.addEventListener('click', () => {
-
     const src = btn.getAttribute('data-src');
     frameImg.src = src;
-
-    frameImg.onload = () => {
-      console.log("frame changed:", src);
-      shootBtn.disabled = false;  // 読み込み完了で撮影可能
-    };
+    console.log("frame changed:", src);
   });
 });
 
