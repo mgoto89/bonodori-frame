@@ -69,41 +69,40 @@ document.getElementById("switchBtn").addEventListener("click", () => {
 
     // 撮影してキャンバスに描画
 shootBtn.addEventListener('click', () => {
-  const vw = video.videoWidth;
-  const vh = video.videoHeight;
-
-  // canvas をカメラ映像サイズに合わせる
-  canvas.width = vw;
-  canvas.height = vh;
-
-  // フレーム画像の縦横比
   const fw = frameImg.width;
   const fh = frameImg.height;
 
+  // canvas をフレーム画像のサイズに合わせる
+  canvas.width = fw;
+  canvas.height = fh;
+
+  // カメラ映像の縦横比
+  const vw = video.videoWidth;
+  const vh = video.videoHeight;
   const videoRatio = vw / vh;
   const frameRatio = fw / fh;
 
   let drawW, drawH;
 
-  if (frameRatio > videoRatio) {
-    // フレームが横長 → 高さを合わせて幅を拡大（はみ出しOK）
-    drawH = vh;
-    drawW = vh * frameRatio;
+  if (videoRatio > frameRatio) {
+    // カメラが横長 → 高さを合わせて幅を拡大（はみ出しOK）
+    drawH = fh;
+    drawW = fh * videoRatio;
   } else {
-    // フレームが縦長 → 幅を合わせて高さを拡大（はみ出しOK）
-    drawW = vw;
-    drawH = vw / frameRatio;
+    // カメラが縦長 → 幅を合わせて高さを拡大（はみ出しOK）
+    drawW = fw;
+    drawH = fw / videoRatio;
   }
 
   // 中央に配置（はみ出し部分は見えない）
-  const x = (vw - drawW) / 2;
-  const y = (vh - drawH) / 2;
+  const x = (fw - drawW) / 2;
+  const y = (fh - drawH) / 2;
 
-  // カメラ映像を描画
-  ctx.drawImage(video, 0, 0, vw, vh);
+  // カメラ映像を描画（フレームに合わせてトリミング）
+  ctx.drawImage(video, x, y, drawW, drawH);
 
-  // フレームを「画面いっぱい」に描画（cover）
-  ctx.drawImage(frameImg, x, y, drawW, drawH);
+  // フレームを重ねる（元の比率のまま）
+  ctx.drawImage(frameImg, 0, 0, fw, fh);
 });
 
     // 合成画像を保存
