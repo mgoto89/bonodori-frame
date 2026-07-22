@@ -47,7 +47,6 @@
 };
 document.querySelectorAll('.frameBtn').forEach(btn => {
   btn.addEventListener('click', () => {
-    shootBtn.disabled = true;  // 読み込み前は押せない
 
     const src = btn.getAttribute('data-src');
     frameImg.src = src;
