@@ -25,10 +25,17 @@
 
   <button id="saveBtn">合成画像を保存</button>
 
-  <div>
-    <button class="frameBtn" data-src="frame1.png">フレーム1</button>
-    <button class="frameBtn" data-src="frame3.png">フレーム2</button>
-  </div>
+<div>
+  <button class="frameBtn" data-src="frame1.png">フレーム1</button>
+  <button class="frameBtn" data-src="frame3.png">フレーム2</button>
+</div>
+
+<!-- ★ フレームプレビュー表示 -->
+<div>
+  <img id="framePreview" src="frame1.png" style="width:150px; margin-top:20px;">
+  style="width:150px; margin-top:20px; box-shadow:0 0 10px rgba(0,0,0,0.3);"
+
+</div>
 
 <script>
   const video = document.getElementById('video');
@@ -57,13 +64,17 @@
     // ↑ キャッシュ防止のため毎回違うURLにする
   }
 
-  // フレーム切り替え
-  document.querySelectorAll('.frameBtn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const src = btn.getAttribute('data-src');
-      loadFrame(src);
-    });
+// フレーム切り替え
+document.querySelectorAll('.frameBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const src = btn.getAttribute('data-src');
+
+    // プレビュー更新（★追加）
+    document.getElementById("framePreview").src = src;
+
+    loadFrame(src);
   });
+});
 
   // カメラ起動
   let currentFacing = "environment";
