@@ -6,17 +6,27 @@
   <style>
     body { text-align: center; font-family: sans-serif; }
     video, canvas { max-width: 100%; height: auto; }
+
     button {
       margin: 16px;
       padding: 25px 40px;
       font-size: 30px;
       border-radius: 12px;
     }
+
     #framePreview {
       width: 200px;
       margin-top: 20px;
       border: 2px solid #ccc;
       border-radius: 10px;
+    }
+
+    /* ★ ボタンを横並びにして、後で順番を反転できるようにする */
+    #buttonWrap {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-direction: row; /* 初期状態（写真 → 切り替え） */
     }
   </style>
 </head>
@@ -41,8 +51,12 @@
   </div>
 
   <br>
-  <button id="shootBtn">写真を撮る</button>
-  <button id="switchBtn">カメラ切り替え</button>
+
+  <!-- ★ ボタンをまとめて後で順番を入れ替える -->
+  <div id="buttonWrap">
+    <button id="shootBtn">写真を撮る</button>
+    <button id="switchBtn">カメラ切り替え</button>
+  </div>
 
   <canvas id="canvas"></canvas><br>
 
@@ -123,7 +137,7 @@
     startCamera();
   });
 
-  // 撮影処理
+  // ★ 撮影処理（撮影後にボタンの順番を反転）
   shootBtn.addEventListener('click', () => {
     const fw = frameImg.width;
     const fh = frameImg.height;
@@ -151,6 +165,11 @@
 
     ctx.drawImage(video, x, y, drawW, drawH);
     ctx.drawImage(frameImg, 0, 0, fw, fh);
+
+    // ★ 撮影後にボタンの配置を逆にする
+    const wrap = document.getElementById('buttonWrap');
+    wrap.style.flexDirection =
+      (wrap.style.flexDirection === 'row-reverse') ? 'row' : 'row-reverse';
   });
 
   // 保存
@@ -168,4 +187,3 @@
 
 </body>
 </html>
-
