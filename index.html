@@ -1,16 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
-<html>
-<body>
-  <h2>Androidの方は下のボタンを押してください</h2>
-  <p>Chromeでフォトフレームを開きます</p>
-
-  <a href="intent://mgoto89.github.io/bonodori-frame/#Intent;scheme=https;package=com.android.chrome;end;">
-    <button style="font-size:30px;padding:20px;">Chromeで開く</button>
-  </a>
-</body>
-</html>
-
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -32,6 +20,7 @@
     }
   </style>
 </head>
+
 <body>
   <h1>盆踊りフォトフレーム</h1>
 
@@ -44,7 +33,7 @@
            style="position: absolute; top: 0; left: 0;
                   width: 100%; height: 100%; object-fit: cover; z-index: 1;"></video>
 
-    <!-- カメラ映像に重ねるフレーム -->
+    <!-- ライブプレビュー用フレーム -->
     <img id="liveFrame" src="frame1.png"
          style="position: absolute; top: 0; left: 0;
                 width: 100%; height: 100%; object-fit: cover;
@@ -67,7 +56,8 @@
   <!-- フレーム選択 -->
   <div>
     <button class="frameBtn" data-src="frame1.png">フレーム1</button>
-    <button class="frameBtn" data-src="frame3.png">フレーム2</button>
+    <button class="frameBtn" data-src="frame2.png">フレーム2</button>
+    <button class="frameBtn" data-src="frame3.png">フレーム3</button>
   </div>
 
 <script>
@@ -178,3 +168,4 @@
 
 </body>
 </html>
+
