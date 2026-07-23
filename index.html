@@ -23,13 +23,19 @@
 <body>
   <h1>盆踊りフォトフレーム</h1>
 
-  <!-- ★ カメラ映像＋ライブフレーム -->
-  <div id="cameraWrap" style="position: relative; display: inline-block; width: 100%; max-width: 400px;">
-    <video id="video" autoplay playsinline style="width: 100%; height: auto; z-index: 1;"></video>
+  <!-- ★ カメラ映像＋ライブフレーム（スマホ縦長比率 9:16） -->
+  <div id="cameraWrap"
+       style="position: relative; display: inline-block; width: 100%; max-width: 420px; aspect-ratio: 9 / 16;">
+
+    <!-- カメラ映像 -->
+    <video id="video" autoplay playsinline
+           style="position: absolute; top: 0; left: 0;
+                  width: 100%; height: 100%; object-fit: cover; z-index: 1;"></video>
 
     <!-- カメラ映像に重ねるフレーム -->
     <img id="liveFrame" src="frame1.png"
-         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+         style="position: absolute; top: 0; left: 0;
+                width: 100%; height: 100%; object-fit: cover;
                 z-index: 2; pointer-events:none;">
   </div>
 
@@ -60,20 +66,6 @@
   const saveBtn = document.getElementById('saveBtn');
 
   let frameImg = null; // 撮影用フレーム
-
-  // ★ video のサイズが決まったら liveFrame のサイズを合わせる
-  video.addEventListener("loadedmetadata", () => {
-    const wrap = document.getElementById("cameraWrap");
-    const live = document.getElementById("liveFrame");
-
-    const vw = video.videoWidth;
-    const vh = video.videoHeight;
-
-    wrap.style.height = wrap.clientWidth * (vh / vw) + "px";
-
-    live.style.width = "100%";
-    live.style.height = "100%";
-  });
 
   // ★ フレーム読み込み（撮影用＋ライブプレビューを完全同期）
   function loadFrame(src) {
