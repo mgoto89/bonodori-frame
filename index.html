@@ -37,33 +37,31 @@
   const shootBtn = document.getElementById('shootBtn');
   const saveBtn = document.getElementById('saveBtn');
 
-  // フレーム画像（1回だけ宣言）
-  let frameImg = new Image();
+  // 現在のフレーム画像
+  let frameImg = null;
 
   // 初期フレーム読み込み
-  shootBtn.disabled = true;   // 読み込み前は無効化
-  frameImg.src = "frame1.png";
+  loadFrame("frame1.png");
 
-  frameImg.onload = () => {
-    console.log("初期フレーム読み込み完了");
-    shootBtn.disabled = false;
-  };
+  function loadFrame(src) {
+    shootBtn.disabled = true;  // 読み込み前は無効化
+
+    const img = new Image();   // ← 新しい Image を毎回生成（Safari対策）
+    img.onload = () => {
+      frameImg = img;
+      console.log("フレーム読み込み完了:", src);
+      shootBtn.disabled = false;
+    };
+
+    img.src = src + "?v=" + Date.now();  
+    // ↑ キャッシュ防止のため毎回違うURLにする
+  }
 
   // フレーム切り替え
   document.querySelectorAll('.frameBtn').forEach(btn => {
     btn.addEventListener('click', () => {
       const src = btn.getAttribute('data-src');
-
-      shootBtn.disabled = true;  // 読み込み前は無効化
-
-      frameImg.onload = () => {
-        console.log("フレーム切り替え完了:", src);
-        shootBtn.disabled = false;
-      };
-
-      // Safari対策：必ず onload を発火させる
-      frameImg.src = "";
-      frameImg.src = src;
+      loadFrame(src);
     });
   });
 
