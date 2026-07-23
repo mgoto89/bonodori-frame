@@ -68,8 +68,11 @@ document.querySelectorAll('.frameBtn').forEach(btn => {
   btn.addEventListener('click', () => {
     const src = btn.getAttribute('data-src');
 
-    // プレビュー更新（★追加）
+    // プレビュー更新（小さい表示）
     document.getElementById("framePreview").src = src;
+
+    // ★ ライブプレビュー更新（カメラ映像に重ねる）
+    document.getElementById("liveFrame").src = src;
 
     loadFrame(src);
   });
