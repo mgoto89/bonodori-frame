@@ -24,8 +24,8 @@
   <h1>盆踊りフォトフレーム</h1>
 
   <!-- ★ カメラ映像＋ライブフレーム -->
-  <div id="cameraWrap" style="position: relative; display: inline-block;">
-    <video id="video" autoplay playsinline style="position: relative; z-index: 1;"></video>
+  <div id="cameraWrap" style="position: relative; display: inline-block; width: 100%; max-width: 400px;">
+    <video id="video" autoplay playsinline style="width: 100%; height: auto; z-index: 1;"></video>
 
     <!-- カメラ映像に重ねるフレーム -->
     <img id="liveFrame" src="frame1.png"
@@ -61,14 +61,28 @@
 
   let frameImg = null; // 撮影用フレーム
 
-  // ★ フレーム読み込み関数（撮影用＋ライブプレビュー両方更新）
+  // ★ video のサイズが決まったら liveFrame のサイズを合わせる
+  video.addEventListener("loadedmetadata", () => {
+    const wrap = document.getElementById("cameraWrap");
+    const live = document.getElementById("liveFrame");
+
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+
+    wrap.style.height = wrap.clientWidth * (vh / vw) + "px";
+
+    live.style.width = "100%";
+    live.style.height = "100%";
+  });
+
+  // ★ フレーム読み込み（撮影用＋ライブプレビューを完全同期）
   function loadFrame(src) {
     shootBtn.disabled = true;
 
     const img = new Image();
     img.onload = () => {
-      frameImg = img;  // 撮影用フレーム更新
-      document.getElementById("liveFrame").src = src;  // ライブプレビュー更新
+      frameImg = img;  // 撮影用フレーム
+      document.getElementById("liveFrame").src = src;  // ライブプレビュー
       shootBtn.disabled = false;
     };
 
