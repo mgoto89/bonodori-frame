@@ -12,12 +12,28 @@
       font-size: 30px;
       border-radius: 12px;
     }
+    #framePreview {
+      width: 200px;
+      margin-top: 20px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
   <h1>盆踊りフォトフレーム</h1>
 
-  <video id="video" autoplay playsinline></video><br>
+  <!-- ★ カメラ映像＋ライブフレーム -->
+  <div id="cameraWrap" style="position: relative; display: inline-block;">
+    <video id="video" autoplay playsinline style="position: relative; z-index: 1;"></video>
+
+    <!-- カメラ映像に重ねるフレーム -->
+    <img id="liveFrame" src="frame1.png"
+         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                z-index: 2; pointer-events:none;">
+  </div>
+
+  <br>
   <button id="shootBtn">写真を撮る</button>
   <button id="switchBtn">カメラ切り替え</button>
 
@@ -25,16 +41,16 @@
 
   <button id="saveBtn">合成画像を保存</button>
 
-<div>
-  <button class="frameBtn" data-src="frame1.png">フレーム1</button>
-  <button class="frameBtn" data-src="frame3.png">フレーム2</button>
-</div>
+  <!-- 小さいプレビュー -->
+  <div>
+    <img id="framePreview" src="frame1.png">
+  </div>
 
-<!-- ★ フレームプレビュー表示 -->
-<div>
-  <img id="framePreview" src="frame1.png" 
-    style="width:200px; margin-top:20px; box-shadow:0 0 10px rgba(0,0,0,0.3);"
-</div>
+  <!-- フレーム選択 -->
+  <div>
+    <button class="frameBtn" data-src="frame1.png">フレーム1</button>
+    <button class="frameBtn" data-src="frame3.png">フレーム2</button>
+  </div>
 
 <script>
   const video = document.getElementById('video');
@@ -43,40 +59,34 @@
   const shootBtn = document.getElementById('shootBtn');
   const saveBtn = document.getElementById('saveBtn');
 
-  // 現在のフレーム画像
-  let frameImg = null;
+  let frameImg = null; // 撮影用フレーム
+
+  // ★ フレーム読み込み関数（撮影用＋ライブプレビュー両方更新）
+  function loadFrame(src) {
+    shootBtn.disabled = true;
+
+    const img = new Image();
+    img.onload = () => {
+      frameImg = img;  // 撮影用フレーム更新
+      document.getElementById("liveFrame").src = src;  // ライブプレビュー更新
+      shootBtn.disabled = false;
+    };
+
+    img.src = src + "?v=" + Date.now(); // キャッシュ防止
+  }
 
   // 初期フレーム読み込み
   loadFrame("frame1.png");
 
-  function loadFrame(src) {
-    shootBtn.disabled = true;  // 読み込み前は無効化
+  // フレーム切り替え
+  document.querySelectorAll('.frameBtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const src = btn.getAttribute('data-src');
 
-    const img = new Image();   // ← 新しい Image を毎回生成（Safari対策）
-    img.onload = () => {
-      frameImg = img;
-      console.log("フレーム読み込み完了:", src);
-      shootBtn.disabled = false;
-    };
-
-    img.src = src + "?v=" + Date.now();  
-    // ↑ キャッシュ防止のため毎回違うURLにする
-  }
-
-// フレーム切り替え
-document.querySelectorAll('.frameBtn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const src = btn.getAttribute('data-src');
-
-    // プレビュー更新（小さい表示）
-    document.getElementById("framePreview").src = src;
-
-    // ★ ライブプレビュー更新（カメラ映像に重ねる）
-    document.getElementById("liveFrame").src = src;
-
-    loadFrame(src);
+      document.getElementById("framePreview").src = src; // 小さいプレビュー更新
+      loadFrame(src); // 撮影用＋ライブプレビュー更新
+    });
   });
-});
 
   // カメラ起動
   let currentFacing = "environment";
